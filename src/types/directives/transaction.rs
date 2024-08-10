@@ -1,0 +1,123 @@
+use std::borrow::Cow;
+use std::collections::HashSet;
+
+use typed_builder::TypedBuilder;
+
+use crate::currency::Currency;
+use crate::flags::Flag;
+use crate::metadata::{Link, Tag};
+use crate::types::date::Date;
+
+use super::posting::Posting;
+
+/// # Transaction Directive
+///
+/// Transactions are the most common type of directives in a Beancount ledger.
+///
+/// ## Syntax
+/// ```
+/// YYYY-MM-DD [txn|Flag] [[Payee] Narration]
+///    [Flag] Account       Amount [{Cost}] [@ Price]
+///    [Flag] Account       Amount [{Cost}] [@ Price]
+///    ...
+/// ```
+///
+/// ## Key Points
+/// 1. Can use 'txn' keyword or a flag (* or !) instead.
+/// 2. Flags indicate transaction status (* for completed, ! for needs revision).
+/// 3. Can have multiple postings (account entries) per transaction.
+/// 4. The sum of all posting amounts must equal zero.
+/// 5. Amounts can be arithmetic expressions.
+///
+/// ## Examples
+/// ```
+/// 2014-05-05 * "Cafe Mogador" "Lamb tagine with wine"
+///   Liabilities:CreditCard:CapitalOne         -37.45 USD
+///   Expenses:Restaurant
+///
+/// 2014-03-19 * "Acme Corp" "Bi-monthly salary payment"
+///   Assets:MyBank:Checking             3062.68 USD
+///   Income:AcmeCorp:Salary            -4615.38 USD
+///   Expenses:Taxes:TY2014:Federal       920.53 USD
+///   ...
+///
+/// 2014-10-05 * "Costco" "Shopping for birthday"
+///   Liabilities:CreditCard:CapitalOne         -45.00          USD
+///   Assets:AccountsReceivable:John            ((40.00/3) + 5) USD
+///   Assets:AccountsReceivable:Michael         40.00/3         USD
+///   Expenses:Shopping
+/// ```
+/// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.up4dj751q84w>
+#[derive(Clone, Debug, PartialEq, TypedBuilder)]
+pub struct Transaction<'a> {
+    pub date: Date<'a>,
+
+    /// Whether or not a transaction is considered complete.
+    ///
+    /// `*` or `txn`: Completed transaction, known amounts, “this looks correct.”
+    /// `!`: Incomplete transaction, needs confirmation or revision, “this looks incorrect.”
+    #[builder(default=Flag::Okay)]
+    pub flag: Flag<'a>,
+
+    /// Payee of this transaction.
+    #[builder(default)]
+    pub payee: Option<Cow<'a, str>>,
+
+    /// # Payee & Narration
+    ///
+    /// A transaction may have an optional "payee" and/or a "narration."
+    ///
+    /// ## Payee
+    /// The payee is a string that represents an external entity involved in the transaction.
+    /// Payees are useful for transactions posting amounts to Expense accounts, accumulating
+    /// expenses from multiple businesses under one category.
+    ///
+    /// ## Narration
+    /// A narration is a description of the transaction that you write. It can include context,
+    /// accompanying persons, product details, or any other relevant information.
+    ///
+    /// ## Syntax Examples
+    ///
+    /// 1. Single string becomes narration:
+    ///    ```
+    ///    2014-05-05 * "Lamb tagine with wine"
+    ///       ...
+    ///    ```
+    ///
+    /// 2. Setting just a payee (with empty narration):
+    ///    ```
+    ///    2014-05-05 * "Cafe Mogador" ""
+    ///       ...
+    ///    ```
+    ///
+    /// 3. Legacy syntax with pipe symbol (to be removed in future):
+    ///    ```
+    ///    2014-05-05 * "Cafe Mogador" | ""
+    ///       ...
+    ///    ```
+    ///
+    /// 4. Transaction with neither payee nor narration (flag required):
+    ///    ```
+    ///    2014-05-05 *
+    ///       ...
+    ///    ```
+    ///
+    /// ## Note for Ledger Users
+    /// Unlike Ledger, which has a single field referred to by the "Payee" metadata tag,
+    /// Beancount's Transaction object has separate payee and narration fields.
+    ///
+    /// For detailed discussion on using payees, refer to "Payees, Subaccounts, and Assets".
+    pub narration: Cow<'a, str>,
+
+    /// Tags associated with the transaction.
+    #[builder(default)]
+    pub tags: HashSet<Tag<'a>>,
+
+    /// Links associated with the transactions.
+    #[builder(default)]
+    pub links: HashSet<Link<'a>>,
+
+    /// Postings belonging to this transaction.
+    #[builder(default)]
+    pub postings: Vec<Posting<'a>>,
+}

@@ -1,0 +1,9 @@
+[package]
+name = "beancount_core_lib"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4.38"
+rust_decimal = "1.35.0"
+typed-builder = "0.19.1"
