@@ -10,7 +10,7 @@ use chrono::NaiveDate;
 /// ```rust
 /// use beancount_core::Date;
 ///
-/// // Create a Date from a String
+/// Create a Date from a String
 /// let past: Date<'static> = Date::from_str_unchecked("2020-01-01");
 /// let later: Date<'static> = Date::from_str_unchecked("43020-01-01");
 /// assert!(later > past);

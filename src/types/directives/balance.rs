@@ -1,9 +1,7 @@
-use std::borrow::Cow;
-
 use rust_decimal::Decimal;
 use typed_builder::TypedBuilder;
 
-use crate::{account::Account, amount::Amount, currency::Currency, types::date::Date};
+use crate::{account::Account, amount::Amount, types::date::Date};
 /// # Balance Assertion Directive
 ///
 /// Balance assertions are used to verify account balances at specific points in time.

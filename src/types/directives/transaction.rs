@@ -3,7 +3,6 @@ use std::collections::HashSet;
 
 use typed_builder::TypedBuilder;
 
-use crate::currency::Currency;
 use crate::flags::Flag;
 use crate::metadata::{Link, Tag};
 use crate::types::date::Date;

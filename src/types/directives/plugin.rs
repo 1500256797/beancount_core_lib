@@ -1,11 +1,6 @@
 use std::borrow::Cow;
-use std::convert::TryFrom;
 
 use typed_builder::TypedBuilder;
-
-use crate::account::Account;
-use crate::currency::Currency;
-use crate::types::date::Date;
 /// # Plugin Directive
 ///
 /// The Plugin directive allows loading and configuring Python modules as plugins in Beancount.

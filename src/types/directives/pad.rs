@@ -1,9 +1,6 @@
-use std::convert::TryFrom;
-
 use typed_builder::TypedBuilder;
 
 use crate::account::Account;
-use crate::currency::Currency;
 use crate::types::date::Date;
 
 /// # Pad Directive

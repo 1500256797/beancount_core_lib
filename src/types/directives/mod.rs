@@ -16,6 +16,7 @@ pub mod note;
 pub mod open;
 pub mod pad;
 pub mod plugin;
+pub mod position;
 pub mod posting;
 pub mod prices;
 pub mod query;

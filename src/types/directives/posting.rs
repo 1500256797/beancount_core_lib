@@ -1,35 +1,63 @@
 use typed_builder::TypedBuilder;
 
-use std::borrow::Cow;
-use std::convert::TryFrom;
-
 use crate::account::Account;
 use crate::amount::IncompleteAmount;
-use crate::currency::Currency;
 use crate::flags::Flag;
 use crate::metadata::Meta;
-use crate::types::date::Date;
 
-/// Represents a transaction posting.  Postings represent a single amount being deposited to or
-/// withdrawn from an account.
+use super::position::CostSpec;
+/// # Costs and Prices in Beancount
 ///
-/// Postings can have optionally have either a cost or a price.  A posting with a price might look
-/// like this, where the price is the amount and commodity following the `@`:
+/// Beancount provides various ways to represent costs and prices in transactions.
 ///
-/// ```text
-/// 2012-11-03 * "Transfer to account in Canada"
-///     Assets:MyBank:Checking            -400.00 USD @ 1.09 CAD
-///     Assets:FR:SocGen:Checking          436.01 CAD
+/// ## Simple Postings
+/// ```
+/// 2012-11-03 * "Transfer to pay credit card"
+///   Assets:MyBank:Checking            -400.00 USD
+///   Liabilities:CreditCard             400.00 USD
 /// ```
 ///
-/// A posting with a cost is the same with the exception that it utilizes `@@`.
-///
-/// ```text
+/// ## Postings with Price
+/// Using '@' for per-unit price:
+/// ```
 /// 2012-11-03 * "Transfer to account in Canada"
-///     Assets:MyBank:Checking            -400.00 USD @@ 436.01 CAD
-///     Assets:FR:SocGen:Checking          436.01 CAD
+///   Assets:MyBank:Checking            -400.00 USD @ 1.09 CAD
+///   Assets:FR:SocGen:Checking          436.01 CAD
 /// ```
 ///
+/// Using '@@' for total price:
+/// ```
+/// 2012-11-03 * "Transfer to account in Canada"
+///   Assets:MyBank:Checking            -400.00 USD @@ 436.01 CAD
+///   Assets:FR:SocGen:Checking          436.01 CAD
+/// ```
+///
+/// ## Postings with Cost
+/// ```
+/// 2014-02-11 * "Bought shares of S&P 500"
+///   Assets:ETrade:IVV                10 IVV {183.07 USD}
+///   Assets:ETrade:Cash         -1830.70 USD
+/// ```
+///
+/// ## Postings with both Cost and Price
+/// ```
+/// 2014-07-11 * "Sold shares of S&P 500"
+///   Assets:ETrade:IVV               -10 IVV {183.07 USD} @ 197.90 USD
+///   Assets:ETrade:Cash          1979.90 USD
+///   Income:ETrade:CapitalGains
+/// ```
+///
+/// ## Balancing Rule - The "weight" of postings
+/// The weight of a posting is calculated as follows:
+/// 1. Amount only: Use the amount and currency as is.
+/// 2. Price only: Multiply amount by price.
+/// 3. Cost only: Multiply amount by cost.
+/// 4. Cost and Price: Use cost for balancing, price for price database.
+///
+/// ## Important Notes
+/// - Prices and costs are always unsigned.
+/// - The sum of weights of all postings in a transaction must equal ZERO.
+/// - Costs are used for inventory tracking and capital gains calculations.
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.mtqrwt24wnzs>
 #[derive(Clone, Debug, Eq, PartialEq, TypedBuilder)]
 pub struct Posting<'a> {
