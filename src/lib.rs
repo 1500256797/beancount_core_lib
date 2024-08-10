@@ -72,9 +72,10 @@ mod tests {
     use rust_decimal::Decimal;
 
     use crate::{
-        amount::Amount,
+        amount::{Amount, IncompleteAmount},
         currency::Currency,
-        directives::{balance::Balance, note::Note},
+        directives::{balance::Balance, note::Note, posting::Posting, transaction::Transaction},
+        flags::Flag,
     };
 
     use self::{
@@ -131,6 +132,39 @@ mod tests {
             .build();
         let balance = directives::Directive::Balance(b);
         let ledger = Ledger::builder().directives(vec![balance]).build();
+        assert_eq!(ledger.directives.len(), 1);
+        println!("{:?}", ledger.directives[0]);
+    }
+
+    #[test]
+    fn new_transaction_directive() {
+        let t = Transaction::builder()
+            .date(Date::from_str_unchecked("2024-08-05"))
+            .flag(Flag::Okay)
+            .narration(Cow::Borrowed("Initial deposit"))
+            .postings(vec![
+                Posting::builder()
+                    .units(
+                        IncompleteAmount::builder()
+                            .num(Some(Decimal::from_str_exact("154.20").unwrap()))
+                            .currency(Some(Currency::from("USD")))
+                            .build(),
+                    )
+                    .account(Account::from("Assets:US:BofA:Checking"))
+                    .build(),
+                Posting::builder()
+                    .units(
+                        IncompleteAmount::builder()
+                            .num(Some(Decimal::from_str_exact("-100").unwrap()))
+                            .currency(Some(Currency::from("USD")))
+                            .build(),
+                    )
+                    .account(Account::from("Assets:Cash"))
+                    .build(),
+            ])
+            .build();
+        let transaction = directives::Directive::Transaction(t);
+        let ledger = Ledger::builder().directives(vec![transaction]).build();
         assert_eq!(ledger.directives.len(), 1);
         println!("{:?}", ledger.directives[0]);
     }
