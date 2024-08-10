@@ -7,9 +7,9 @@ use crate::{account::Account, amount::Amount, types::date::Date};
 /// Balance assertions are used to verify account balances at specific points in time.
 ///
 /// ## Syntax
-/// ```
+/// ```ignore
 /// YYYY-MM-DD balance Account Amount
-/// ```
+/// ```ignore
 ///
 /// ## Key Points
 /// 1. Verifies that the account balance matches the specified amount on the given date.
@@ -19,9 +19,9 @@ use crate::{account::Account, amount::Amount, types::date::Date};
 /// 5. Accounts have an implicit zero balance assertion at their opening date.
 ///
 /// ## Example
-/// ```
+/// ```ignore
 /// 2014-12-26 balance Liabilities:US:CreditCard   -3492.02 USD
-/// ```
+/// ```ignore
 ///
 /// ## Usage Notes
 /// - Helps catch issues like duplicate transactions.
@@ -29,15 +29,15 @@ use crate::{account::Account, amount::Amount, types::date::Date};
 /// - Beancount reports an error if the actual balance doesn't match the assertion.
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.l0pvgeniwvq8>
 #[derive(Clone, Debug, PartialEq, TypedBuilder)]
-pub struct Balance<'a> {
+pub struct Balance {
     /// Date of the balance.
-    pub date: Date<'a>,
+    pub date: Date,
 
     /// Account to check the balance of.
     pub account: Account,
 
     /// Amount to balance.
-    pub amount: Amount<'a>,
+    pub amount: Amount,
 
     #[builder(default)]
     pub tolerance: Option<Decimal>,

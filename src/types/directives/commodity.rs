@@ -7,14 +7,14 @@ use crate::types::date::Date;
 /// The Commodity directive is used to declare currencies, financial instruments, or commodities.
 ///
 /// ## Syntax
-/// ```
+/// ```ignore
 /// YYYY-MM-DD commodity Currency
-/// ```
+/// ```ignore
 ///
 /// Example:
-/// ```
+/// ```ignore
 /// 1867-07-01 commodity CAD
-/// ```
+/// ```ignore
 ///
 /// ## Key Points
 /// 1. Optional: Commodities can be used without explicit declaration.
@@ -24,7 +24,7 @@ use crate::types::date::Date;
 /// 5. It's an error to declare the same commodity twice.
 ///
 /// ## Example with Metadata
-/// ```
+/// ```ignore
 /// 1867-07-01 commodity CAD
 ///   name: "Canadian Dollar"
 ///   asset-class: "cash"
@@ -32,13 +32,13 @@ use crate::types::date::Date;
 /// 2012-01-01 commodity HOOL
 ///   name: "Hooli Corporation Class C Shares"
 ///   asset-class: "stock"
-/// ```
+/// ```ignore
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.a3si01ejc035>
 #[derive(Clone, Debug, Eq, PartialEq, TypedBuilder)]
-pub struct Commodity<'a> {
+pub struct Commodity {
     /// Date the commodity was declared.
-    pub date: Date<'a>,
+    pub date: Date,
 
     /// Commodity name.
-    pub name: Currency<'a>,
+    pub name: Currency,
 }

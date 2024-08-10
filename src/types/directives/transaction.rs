@@ -1,4 +1,3 @@
-use std::borrow::Cow;
 use std::collections::HashSet;
 
 use typed_builder::TypedBuilder;
@@ -14,12 +13,12 @@ use super::posting::Posting;
 /// Transactions are the most common type of directives in a Beancount ledger.
 ///
 /// ## Syntax
-/// ```
+/// ```ignore
 /// YYYY-MM-DD [txn|Flag] [[Payee] Narration]
 ///    [Flag] Account       Amount [{Cost}] [@ Price]
 ///    [Flag] Account       Amount [{Cost}] [@ Price]
 ///    ...
-/// ```
+/// ```ignore
 ///
 /// ## Key Points
 /// 1. Can use 'txn' keyword or a flag (* or !) instead.
@@ -29,7 +28,7 @@ use super::posting::Posting;
 /// 5. Amounts can be arithmetic expressions.
 ///
 /// ## Examples
-/// ```
+/// ```ignore
 /// 2014-05-05 * "Cafe Mogador" "Lamb tagine with wine"
 ///   Liabilities:CreditCard:CapitalOne         -37.45 USD
 ///   Expenses:Restaurant
@@ -45,22 +44,22 @@ use super::posting::Posting;
 ///   Assets:AccountsReceivable:John            ((40.00/3) + 5) USD
 ///   Assets:AccountsReceivable:Michael         40.00/3         USD
 ///   Expenses:Shopping
-/// ```
+/// ```ignore
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.up4dj751q84w>
 #[derive(Clone, Debug, PartialEq, TypedBuilder)]
-pub struct Transaction<'a> {
-    pub date: Date<'a>,
+pub struct Transaction {
+    pub date: Date,
 
     /// Whether or not a transaction is considered complete.
     ///
     /// `*` or `txn`: Completed transaction, known amounts, “this looks correct.”
     /// `!`: Incomplete transaction, needs confirmation or revision, “this looks incorrect.”
     #[builder(default=Flag::Okay)]
-    pub flag: Flag<'a>,
+    pub flag: Flag,
 
     /// Payee of this transaction.
     #[builder(default)]
-    pub payee: Option<Cow<'a, str>>,
+    pub payee: Option<String>,
 
     /// # Payee & Narration
     ///
@@ -78,45 +77,45 @@ pub struct Transaction<'a> {
     /// ## Syntax Examples
     ///
     /// 1. Single string becomes narration:
-    ///    ```
+    ///    ```ignore
     ///    2014-05-05 * "Lamb tagine with wine"
     ///       ...
-    ///    ```
+    ///    ```ignore
     ///
     /// 2. Setting just a payee (with empty narration):
-    ///    ```
+    ///    ```ignore    
     ///    2014-05-05 * "Cafe Mogador" ""
     ///       ...
-    ///    ```
+    ///    ```ignore
     ///
     /// 3. Legacy syntax with pipe symbol (to be removed in future):
-    ///    ```
+    ///    ```ignore
     ///    2014-05-05 * "Cafe Mogador" | ""
     ///       ...
-    ///    ```
+    ///    ```ignore
     ///
     /// 4. Transaction with neither payee nor narration (flag required):
-    ///    ```
+    ///    ```ignore
     ///    2014-05-05 *
     ///       ...
-    ///    ```
+    ///    ```ignore
     ///
     /// ## Note for Ledger Users
     /// Unlike Ledger, which has a single field referred to by the "Payee" metadata tag,
     /// Beancount's Transaction object has separate payee and narration fields.
     ///
     /// For detailed discussion on using payees, refer to "Payees, Subaccounts, and Assets".
-    pub narration: Cow<'a, str>,
+    pub narration: String,
 
     /// Tags associated with the transaction.
     #[builder(default)]
-    pub tags: HashSet<Tag<'a>>,
+    pub tags: HashSet<Tag>,
 
     /// Links associated with the transactions.
     #[builder(default)]
-    pub links: HashSet<Link<'a>>,
+    pub links: HashSet<Link>,
 
     /// Postings belonging to this transaction.
     #[builder(default)]
-    pub postings: Vec<Posting<'a>>,
+    pub postings: Vec<Posting>,
 }

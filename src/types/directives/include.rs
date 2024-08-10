@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use typed_builder::TypedBuilder;
 
 /// # Include Directive
@@ -7,9 +5,9 @@ use typed_builder::TypedBuilder;
 /// The Include directive allows splitting large Beancount input files into multiple files.
 ///
 /// ## Syntax
-/// ```
+/// ```ignore
 /// include "path/to/include/file.beancount"
-/// ```
+/// ```ignore
 ///
 /// ## Key Points
 /// 1. Supports both absolute and relative file paths.
@@ -26,11 +24,11 @@ use typed_builder::TypedBuilder;
 /// - Options handling may be subject to change in future versions.
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.86lelow4097r>
 #[derive(Clone, Debug, Eq, PartialEq, TypedBuilder)]
-pub struct Include<'a> {
+pub struct Include {
     /// Fully qualified filename, including any necessary path segments.
-    pub filename: Cow<'a, str>,
+    pub filename: String,
 
     /// Source string from the parsed input
     #[builder(default)]
-    pub source: Option<&'a str>,
+    pub source: Option<String>,
 }

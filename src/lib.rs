@@ -11,9 +11,9 @@ pub use types::*;
 /// defines which kind of event this directive represents. All the directives begin with a syntax
 /// that looks like this:
 ///
-/// ```
+/// ```ignore
 /// YYYY-MM-DD <type> …
-/// ```
+/// ```ignore
 ///
 /// where YYYY is the year, MM is the numerical month, and DD the numerical date. All digits are
 /// required, for example, the 7th of May 2007 should be "2007-05-07", including its zeros.
@@ -22,11 +22,11 @@ pub use types::*;
 ///
 /// Here are some example directives, just to give you an idea of the aesthetics:
 ///
-/// ```
+/// ```ignore
 /// 2014-02-03 open Assets:US:BofA:Checking
 /// 2014-04-10 note Assets:US:BofA:Checking "Called to confirm wire transfer."
 /// 2014-05-02 balance Assets:US:BofA:Checking   154.20 USD
-/// ```
+/// ```ignore
 ///
 /// The end product of a parsed input file is a simple list of these entries, in a data structure.
 /// All operations in Beancount are performed on these entries.
@@ -43,31 +43,30 @@ pub use types::*;
 /// Except for transactions, each directive is assumed to occur at the beginning of each day. For
 /// example, you could declare an account being opened on the same day as its first transaction:
 ///
-/// ```
+/// ```ignore
 /// 2014-02-03 open Assets:US:BofA:Checking
 ///
 /// 2014-02-03 * "Initial deposit"
 ///   Assets:US:BofA:Checking         100 USD
 ///   Assets:Cash                    -100 USD
-/// ```
+/// ```ignore
 ///
 /// However, if you hypothetically closed that account immediately, you could not declare it closed
 /// on the same day, you would have to fudge the date forward by declaring the close on 2/4:
 ///
-/// ```
+/// ```ignore
 /// 2014-02-04 close Assets:US:BofA:Checking
-/// ```
+/// ```ignore
 ///
 /// This also explains why balance assertions are verified before any transactions that occur on
 /// the same date. This is for consistency.
 #[derive(Clone, Debug, PartialEq, Default, TypedBuilder)]
-pub struct Ledger<'a> {
-    pub directives: Vec<directives::Directive<'a>>,
+pub struct Ledger {
+    pub directives: Vec<directives::Directive>,
 }
 
 #[cfg(test)]
 mod tests {
-    use std::borrow::Cow;
 
     use rust_decimal::Decimal;
 
@@ -109,7 +108,7 @@ mod tests {
         let n = Note::builder()
             .date(Date::from_str_unchecked("2024-08-05"))
             .account(Account::from("Assets:US:BofA:Checking"))
-            .comment(Cow::Borrowed("Called to confirm wire transfer."))
+            .comment("Called to confirm wire transfer.".to_string())
             .build();
 
         let note = directives::Directive::Note(n);
@@ -141,7 +140,7 @@ mod tests {
         let t = Transaction::builder()
             .date(Date::from_str_unchecked("2024-08-05"))
             .flag(Flag::Okay)
-            .narration(Cow::Borrowed("Initial deposit"))
+            .narration("Initial deposit".to_string())
             .postings(vec![
                 Posting::builder()
                     .units(

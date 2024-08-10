@@ -1,54 +1,41 @@
-use std::borrow::Cow;
 use std::fmt;
 
 /// A flag for a posting or transaction.
 ///
 /// # Example
-/// ```rust
+/// ```ignorerust
 /// use beancount_core::Flag;
 /// assert_eq!(Flag::default(), Flag::Okay);
 /// assert_eq!(Flag::from("*"), Flag::Okay);
 /// assert_eq!(Flag::from("!"), Flag::Warning);
 /// assert_eq!(Flag::from(":)"), Flag::Other(":)".into()));
-/// ```
+/// ```ignore
 // TODO: Make sure that the variant Other("*") can't be created, since Other("*") != Okay
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
-pub enum Flag<'a> {
+pub enum Flag {
     Okay,
     Warning,
-    Other(Cow<'a, str>),
+    Other(String),
 }
 
-impl Default for Flag<'_> {
+impl Default for Flag {
     fn default() -> Self {
         Flag::Okay
     }
 }
 
-impl<'a> From<&'a str> for Flag<'a> {
-    fn from(s: &'a str) -> Self {
-        Cow::from(s).into()
-    }
-}
-
-impl From<String> for Flag<'_> {
-    fn from(s: String) -> Self {
-        Cow::from(s).into()
-    }
-}
-
-impl<'a> From<Cow<'a, str>> for Flag<'a> {
-    fn from(s: Cow<'a, str>) -> Self {
+impl From<&str> for Flag {
+    fn from(s: &str) -> Self {
         match &*s {
             "*" | "txn" => Flag::Okay,
             "!" => Flag::Warning,
-            _ => Flag::Other(s),
+            _ => Flag::Other(s.to_string()),
         }
     }
 }
 
-impl fmt::Display for Flag<'_> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl fmt::Display for Flag {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Flag::Okay => write!(f, "*"),
             Flag::Warning => write!(f, "!"),

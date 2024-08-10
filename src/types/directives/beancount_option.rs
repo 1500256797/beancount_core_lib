@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use typed_builder::TypedBuilder;
 
 use crate::account::AccountType;
@@ -9,9 +7,9 @@ use crate::account::AccountType::*;
 /// The Option directive allows setting global options in a Beancount input file.
 ///
 /// ## Syntax
-/// ```
+/// ```ignore
 /// option "Name" "Value"
-/// ```
+/// ```ignore
 ///
 /// ## Key Points
 /// 1. Options are set using an undated "option" directive.
@@ -30,10 +28,10 @@ use crate::account::AccountType::*;
 /// - Multiple operating currencies can be declared.
 ///
 /// ## Example
-/// ```
+/// ```ignore
 /// option "title" "Ed's Personal Ledger"
 /// option "operating_currency" "USD"
-/// ```
+/// ```ignore
 ///
 /// ## Usage Notes
 /// - Operating currency is crucial for useful reports and data export.
@@ -42,24 +40,24 @@ use crate::account::AccountType::*;
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.e2iyrfrmstl>
 
 #[derive(Clone, Debug, Eq, PartialEq, TypedBuilder)]
-pub struct BcOption<'a> {
+pub struct BcOption {
     /// Name of the option.
-    pub name: Cow<'a, str>,
+    pub name: String,
 
     /// Value of the option.
-    pub val: Cow<'a, str>,
+    pub val: String,
 
     /// Source string from the parsed input
     #[builder(default)]
-    pub source: Option<&'a str>,
+    pub source: Option<String>,
 }
 
-impl<'a> BcOption<'a> {
+impl BcOption {
     /// Determines if the current option specifies a root account name change.
     /// For example, the following line will rename the 'Assets' root account to 'Activa':
-    /// ```beancount
+    /// ```ignorebeancount
     /// option "name_assets" "Activa"
-    /// ```
+    /// ```ignore
     ///
     /// If this option is such a name change, this function will return the account type
     /// and the new account name. Otherwise, it will return `None`.

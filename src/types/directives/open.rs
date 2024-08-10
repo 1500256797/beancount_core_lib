@@ -11,14 +11,14 @@ use crate::types::date::Date;
 /// All accounts need to be declared "open" before they can accept postings.
 ///
 /// ## Syntax
-/// ```
+/// ```ignore
 /// YYYY-MM-DD open Account [ConstraintCurrency,...]  ["BookingMethod"]
-/// ```
+/// ```ignore
 ///
 /// Example:
-/// ```
+/// ```ignore
 /// 2014-05-01 open Liabilities:CreditCard:CapitalOne     USD
-/// ```
+/// ```ignore
 ///
 /// ## Key Points
 /// 1. Optional list of constraint currencies enforces that all postings to this account
@@ -37,9 +37,9 @@ use crate::types::date::Date;
 /// - NONE: No lot matching is performed, accepts lots of any price.
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.omdgvaikswd0>
 #[derive(Clone, Debug, Eq, PartialEq, TypedBuilder)]
-pub struct Open<'a> {
+pub struct Open {
     /// Date the account was opened.
-    pub date: Date<'a>,
+    pub date: Date,
 
     /// Account being opened.
     pub account: Account,
@@ -47,7 +47,7 @@ pub struct Open<'a> {
     /// Commodities allowed for the opened account. An empty list means no restrictions on the
     /// allowed commodities.
     #[builder(default)]
-    pub currencies: Vec<Currency<'a>>,
+    pub currencies: Vec<Currency>,
 
     /// Booking method. The default booking method for accounts is
     /// [`Booking::Strict`](enum.Booking.html).
@@ -78,10 +78,10 @@ pub enum Booking {
     Lifo,
 }
 
-impl<'a> TryFrom<&'a str> for Booking {
+impl TryFrom<&str> for Booking {
     type Error = ();
 
-    fn try_from(val: &'a str) -> Result<Self, Self::Error> {
+    fn try_from(val: &str) -> Result<Self, Self::Error> {
         match val {
             "STRICT" => Ok(Booking::Strict),
             "STRICT_WITH_SIZE" => Ok(Booking::StrictWithSize),

@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use rust_decimal::Decimal;
 use typed_builder::TypedBuilder;
 
@@ -32,16 +30,16 @@ use crate::{amount::Amount, currency::Currency, types::date::Date};
 /// lots, but the total amount being reduced equals the total amount in the lots, all those lots are reduced by that posting.
 ///
 /// For example, if in the past you had the following transactions:
-/// ```
+/// ```ignore
 /// 2014-02-11 * "Bought shares of S&P 500"
 ///   Assets:ETrade:IVV                20 IVV {183.07 USD, "ref-001"}
 ///   …
 /// 2014-03-22 * "Bought shares of S&P 500"
 ///   Assets:ETrade:IVV                15 IVV {187.12 USD}
 ///   …
-/// ```
+/// ```ignore
 /// Each of the following reductions would be unambiguous:
-/// ```
+/// ```ignore
 /// 2014-05-01 * "Sold shares of S&P 500"
 ///   Assets:ETrade:IVV               -20 IVV {183.07 USD}
 ///   …
@@ -54,13 +52,13 @@ use crate::{amount::Amount, currency::Currency, types::date::Date};
 /// 2014-05-01 * "Sold shares of S&P 500"
 ///   Assets:ETrade:IVV               -35 IVV {}
 ///   …
-/// ```
+/// ```ignore
 /// However, the following would be ambiguous:
-/// ```
+/// ```ignore
 /// 2014-05-01 * "Sold shares of S&P 500"
 ///   Assets:ETrade:IVV               -20 IVV {}
 ///   …
-/// ```
+/// ```ignore
 /// If multiple lots match against the reducing posting and their number is not the total number, we are in a
 /// situation of ambiguous matches. What happens then, is that the account's booking method is invoked. There are
 /// multiple booking methods, but by default, all accounts are set to use the "STRICT" booking method. This method
@@ -77,11 +75,11 @@ use crate::{amount::Amount, currency::Currency, types::date::Date};
 /// For such postings, a change that results in a negative number of units is usually impossible. Beancount does
 /// not currently allow holding a negative number of a commodity held at cost. For example, an input with just
 /// this transaction will fail:
-/// ```
+/// ```ignore
 /// 2014-05-23 *
 ///   Assets:Investments:MSFT        -10 MSFT {43.40 USD}
 ///   Assets:Investments:Cash     434.00 USD
-/// ```
+/// ```ignore
 /// If it did not, this would result in a balance of -10 units of MSFT. On the other hand, if the account had a
 /// balance of 12 units of MSFT held at 43.40 USD on 5/23, the transaction would book just fine, reducing the
 /// existing 12 units to 2. Most often, the error that will occur is that the account will be holding a balance
@@ -107,11 +105,11 @@ use crate::{amount::Amount, currency::Currency, types::date::Date};
 ///
 /// For more details of the inventory booking algorithm, see the How Inventories Work document.
 #[derive(Clone, Debug, Eq, PartialEq, Hash, TypedBuilder)]
-pub struct Cost<'a> {
+pub struct Cost {
     pub number: Decimal,
-    pub currency: Currency<'a>,
-    pub date: Date<'a>,
-    pub label: Option<Cow<'a, str>>,
+    pub currency: Currency,
+    pub date: Date,
+    pub label: Option<String>,
 }
 
 // TODO: Important Note. Amounts specified as either per-share or total prices or costs are always
@@ -122,27 +120,27 @@ pub struct Cost<'a> {
 ///
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.mtqrwt24wnzs>
 #[derive(Clone, Debug, Eq, PartialEq, Hash, TypedBuilder)]
-pub struct CostSpec<'a> {
+pub struct CostSpec {
     #[builder(default)]
     pub number_per: Option<Decimal>,
     #[builder(default)]
     pub number_total: Option<Decimal>,
     /// The type of commodity for this cost.
     #[builder(default)]
-    pub currency: Option<Currency<'a>>,
+    pub currency: Option<Currency>,
     /// The date of the at-cost.
     #[builder(default)]
-    pub date: Option<Date<'a>>,
+    pub date: Option<Date>,
     /// The label of the cost.
     #[builder(default)]
-    pub label: Option<Cow<'a, str>>,
+    pub label: Option<String>,
     /// Flag to indicate that all lots should be merged and average cost to be used
     #[builder(default)]
     pub merge_cost: bool,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash, TypedBuilder)]
-pub struct Position<'a> {
-    pub units: Amount<'a>,
-    pub cost: Option<Cost<'a>>,
+pub struct Position {
+    pub units: Amount,
+    pub cost: Option<Cost>,
 }

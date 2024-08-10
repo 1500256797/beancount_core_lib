@@ -24,22 +24,22 @@ pub mod transaction;
 
 /// Enum of all directive types.
 #[derive(Clone, Debug, PartialEq)]
-pub enum Directive<'a> {
-    Open(Open<'a>),
-    Close(Close<'a>),
-    Commodity(Commodity<'a>),
-    Transaction(Transaction<'a>),
-    Balance(Balance<'a>),
-    Pad(Pad<'a>),
-    Note(Note<'a>),
-    Document(Document<'a>),
-    Price(Price<'a>),
-    Event(Event<'a>),
-    Query(Query<'a>),
-    Custom(Custom<'a>),
+pub enum Directive {
+    Open(Open),
+    Close(Close),
+    Commodity(Commodity),
+    Transaction(Transaction),
+    Balance(Balance),
+    Pad(Pad),
+    Note(Note),
+    Document(Document),
+    Price(Price),
+    Event(Event),
+    Query(Query),
+    Custom(Custom),
     // other directives
-    Include(Include<'a>),
-    Option(BcOption<'a>),
-    Plugin(Plugin<'a>),
+    Include(Include),
+    Option(BcOption),
+    Plugin(Plugin),
     Unsupported,
 }

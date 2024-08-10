@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use typed_builder::TypedBuilder;
 
 use crate::account::Account;
@@ -10,9 +8,9 @@ use crate::types::date::Date;
 /// The Note directive is used to attach dated comments to specific accounts in the journal.
 ///
 /// ## Syntax
-/// ```
+/// ```ignore
 /// YYYY-MM-DD note Account Description
-/// ```
+/// ```ignore
 ///
 /// ## Key Points
 /// 1. Attaches a dated comment to a particular account.
@@ -21,9 +19,9 @@ use crate::types::date::Date;
 /// 4. Notes are rendered in context when the journal is displayed.
 ///
 /// ## Example
-/// ```
+/// ```ignore
 /// 2013-11-03 note Liabilities:CreditCard "Called about fraudulent card."
-/// ```
+/// ```ignore
 ///
 /// ## Usage Notes
 /// - Helps record important facts or events related to an account.
@@ -31,13 +29,13 @@ use crate::types::date::Date;
 /// - Provides additional context when reviewing account history.
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.c4cyaa6o6rqm>
 #[derive(Clone, Debug, Eq, PartialEq, TypedBuilder)]
-pub struct Note<'a> {
+pub struct Note {
     /// Date of the note.
-    pub date: Date<'a>,
+    pub date: Date,
 
     /// Account being noted.
     pub account: Account,
 
     /// Note description.
-    pub comment: Cow<'a, str>,
+    pub comment: String,
 }

@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use crate::types::date::Date;
 use typed_builder::TypedBuilder;
 
@@ -8,9 +6,9 @@ use typed_builder::TypedBuilder;
 /// The Event directive tracks the value of user-defined variables over time.
 ///
 /// ## Syntax
-/// ```
+/// ```ignore
 /// YYYY-MM-DD event Name Value
-/// ```
+/// ```ignore
 ///
 /// ## Key Points
 /// 1. Used to record changes in user-defined variables.
@@ -19,9 +17,9 @@ use typed_builder::TypedBuilder;
 /// 4. Values can be any string without prescribed structure.
 ///
 /// ## Examples
-/// ```
+/// ```ignore
 /// 2014-07-09 event "location" "Paris, France"
-/// ```
+/// ```ignore
 ///
 /// ## Common Use Cases
 /// - Tracking location
@@ -39,13 +37,13 @@ use typed_builder::TypedBuilder;
 ///
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.tm5fxddlik5x>
 #[derive(Clone, Debug, Eq, PartialEq, TypedBuilder)]
-pub struct Event<'a> {
+pub struct Event {
     /// Date the event occurred.
-    pub date: Date<'a>,
+    pub date: Date,
 
     /// Name of the event.
-    pub name: Cow<'a, str>,
+    pub name: String,
 
     /// New value of the event.
-    pub description: Cow<'a, str>,
+    pub description: String,
 }

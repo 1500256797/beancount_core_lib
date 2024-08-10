@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 use typed_builder::TypedBuilder;
 
 use crate::types::date::Date;
@@ -8,9 +6,9 @@ use crate::types::date::Date;
 /// The Query directive allows embedding SQL queries directly in Beancount files.
 ///
 /// ## Syntax
-/// ```
+/// ```ignore
 /// YYYY-MM-DD query Name SqlContents
-/// ```
+/// ```ignore
 ///
 /// ## Key Points
 /// 1. Experimental feature for associating SQL queries with Beancount files.
@@ -19,10 +17,10 @@ use crate::types::date::Date;
 /// 4. Each query has a name and an associated date.
 ///
 /// ## Example
-/// ```
+/// ```ignore
 /// 2014-07-09 query "france-balances" "
 ///   SELECT account, sum(position) WHERE 'trip-france-2014' in tags"
-/// ```
+/// ```ignore
 ///
 /// ## Usage Notes
 /// - The date specifies when the query should be run (transactions after this date are ignored).
@@ -34,13 +32,13 @@ use crate::types::date::Date;
 
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.nw8fgvy4ub1w>
 #[derive(Clone, Debug, Eq, PartialEq, TypedBuilder)]
-pub struct Query<'a> {
+pub struct Query {
     /// Date on which the query should be run.
-    pub date: Date<'a>,
+    pub date: Date,
 
     /// Name of the query.
-    pub name: Cow<'a, str>,
+    pub name: String,
 
     /// Query contents.
-    pub query_string: Cow<'a, str>,
+    pub query_string: String,
 }

@@ -1,5 +1,3 @@
-use std::borrow::Cow;
-
 /// # Commodities / Currencies
 ///
 /// Accounts contain currencies, which we sometimes also call commodities (we use both terms
@@ -7,14 +5,14 @@ use std::borrow::Cow;
 /// unlike account names, they need not be declared before being used). The syntax for a currency
 /// is a word all in capital letters, like these:
 ///
-/// ```
+/// ```ignore
 /// USD
 /// CAD
 /// EUR
 /// MSFT
 /// IBM
 /// AIRMILE
-/// ```
+/// ```ignore
 ///
 /// Technically, a currency name may be up to 24 characters long, and it must start with a capital
 /// letter, must end with with a capital letter or number, and its other characters must only be
@@ -49,4 +47,4 @@ use std::borrow::Cow;
 /// Finally, you will notice that there exists a "commodity" directive that can be used to declare
 /// currencies. It is entirely optional: currencies come into being as you use them. The purpose of
 /// the directive is simply to attach metadata to it.
-pub type Currency<'a> = Cow<'a, str>;
+pub type Currency = String;

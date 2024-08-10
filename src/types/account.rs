@@ -72,7 +72,7 @@ impl From<&str> for AccountType {
 ///
 /// implicitly declare a tree of accounts that looks like this:
 ///
-/// ```
+/// ```ignore
 /// `-- Assets
 ///     |-- Receivables
 ///     `-- US
@@ -82,7 +82,7 @@ impl From<&str> for AccountType {
 ///         `-- Vanguard
 ///             |-- Cash
 ///             `-- RGAG
-/// ```
+/// ```ignore
 ///
 /// 我们可以说"Assets:US:BofA"是"Assets:US:BofA:Checking"的父账户，而后者是前者的子账户。
 ///
