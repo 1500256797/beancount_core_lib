@@ -64,3 +64,74 @@ pub use types::*;
 pub struct Ledger<'a> {
     pub directives: Vec<directives::Directive<'a>>,
 }
+
+#[cfg(test)]
+mod tests {
+    use std::borrow::Cow;
+
+    use rust_decimal::Decimal;
+
+    use crate::{
+        amount::Amount,
+        currency::Currency,
+        directives::{balance::Balance, note::Note},
+    };
+
+    use self::{
+        account::Account,
+        date::Date,
+        directives::open::{Open, OpenBuilder},
+    };
+
+    use super::*;
+
+    #[test]
+    fn it_works() {
+        let ledger = Ledger::default();
+        assert_eq!(ledger.directives.len(), 0);
+    }
+
+    #[test]
+    fn new_open_directive() {
+        let o = Open::builder()
+            .date(Date::from_str_unchecked("2024-08-05"))
+            .account(Account::from("Assets:US:BofA:Checking"))
+            .build();
+        let open = directives::Directive::Open(o);
+        let ledger = Ledger::builder().directives(vec![open]).build();
+        assert_eq!(ledger.directives.len(), 1);
+        println!("{:?}", ledger.directives[0]);
+    }
+
+    #[test]
+    fn new_note_directive() {
+        let n = Note::builder()
+            .date(Date::from_str_unchecked("2024-08-05"))
+            .account(Account::from("Assets:US:BofA:Checking"))
+            .comment(Cow::Borrowed("Called to confirm wire transfer."))
+            .build();
+
+        let note = directives::Directive::Note(n);
+        let ledger = Ledger::builder().directives(vec![note]).build();
+        assert_eq!(ledger.directives.len(), 1);
+        println!("{:?}", ledger.directives[0]);
+    }
+
+    #[test]
+    fn new_balance_directive() {
+        let b = Balance::builder()
+            .date(Date::from_str_unchecked("2024-08-05"))
+            .account(Account::from("Assets:US:BofA:Checking"))
+            .amount(
+                Amount::builder()
+                    .num(Decimal::from_str_exact("154.20").unwrap())
+                    .currency(Currency::from("USD"))
+                    .build(),
+            )
+            .build();
+        let balance = directives::Directive::Balance(b);
+        let ledger = Ledger::builder().directives(vec![balance]).build();
+        assert_eq!(ledger.directives.len(), 1);
+        println!("{:?}", ledger.directives[0]);
+    }
+}

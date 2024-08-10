@@ -22,6 +22,20 @@ impl AccountType {
         }
     }
 }
+
+impl From<&str> for AccountType {
+    fn from(s: &str) -> Self {
+        match s {
+            "Assets" => AccountType::Assets,
+            "Liabilities" => AccountType::Liabilities,
+            "Equity" => AccountType::Equity,
+            "Income" => AccountType::Income,
+            "Expenses" => AccountType::Expenses,
+            _ => panic!("Invalid account type: {}", s),
+        }
+    }
+}
+
 /// Accounts
 ///
 /// Beancount accumulates commodities in accounts. The names of these accounts do not have to be
@@ -81,7 +95,18 @@ pub struct Account {
     #[builder(default)]
     pub parts: Vec<String>,
 }
-
+// "Assets:US:BofA:Checking" => AccountType::Assets, vec!["US", "BofA", "Checking"]
+impl From<&str> for Account {
+    fn from(s: &str) -> Self {
+        let parts: Vec<String> = s.split(":").map(|s| s.to_string()).collect();
+        let account_type = AccountType::from(parts[0].as_str());
+        let parts = parts[1..].to_vec();
+        Account {
+            account_type,
+            parts,
+        }
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
