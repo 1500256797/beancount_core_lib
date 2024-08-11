@@ -1,3 +1,5 @@
+use std::fmt;
+
 use typed_builder::TypedBuilder;
 
 use crate::account::Account;
@@ -80,4 +82,23 @@ pub struct Posting {
 
     #[builder(default)]
     pub meta: Meta,
+}
+
+impl fmt::Display for Posting {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // 使用制表符分隔账户和单位
+        let mut res = format!("{}\t{}", self.account, self.units);
+
+        // 添加成本信息（如果有）
+        if let Some(cost) = &self.cost {
+            res.push_str(&format!("\t{}", cost));
+        }
+
+        // 添加价格信息（如果有）
+        if let Some(price) = &self.price {
+            res.push_str(&format!("\t@ {}", price));
+        }
+
+        write!(f, "{}", res)
+    }
 }

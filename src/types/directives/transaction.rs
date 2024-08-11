@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::fmt;
 
 use typed_builder::TypedBuilder;
 
@@ -118,4 +119,49 @@ pub struct Transaction {
     /// Postings belonging to this transaction.
     #[builder(default)]
     pub postings: Vec<Posting>,
+}
+
+impl fmt::Display for Transaction {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut res = format!("{}", self.date);
+        res.push_str(&format!(" {}", self.flag));
+        if let Some(payee) = &self.payee {
+            res.push_str(&format!(" {}", payee));
+        }
+        // add "" for narration
+
+        res.push_str(&format!(" \"{}\"", self.narration));
+
+        // add tags
+        if !self.tags.is_empty() {
+            res.push_str(&format!(
+                " {}",
+                self.tags
+                    .iter()
+                    .map(|t| t.to_string())
+                    .collect::<Vec<String>>()
+                    .join(" ")
+            ));
+        }
+
+        // add links
+        if !self.links.is_empty() {
+            res.push_str(&format!(
+                " {}",
+                self.links
+                    .iter()
+                    .map(|l| l.to_string())
+                    .collect::<Vec<String>>()
+                    .join(" ")
+            ));
+        }
+        // new line
+        res.push('\n');
+
+        for posting in &self.postings {
+            res.push_str(&format!("  {}", posting));
+            res.push('\n');
+        }
+        write!(f, "{}", res)
+    }
 }

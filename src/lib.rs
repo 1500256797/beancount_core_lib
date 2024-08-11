@@ -167,4 +167,34 @@ mod tests {
         assert_eq!(ledger.directives.len(), 1);
         println!("{:?}", ledger.directives[0]);
     }
+
+    #[test]
+    fn test_transaction_display() {
+        let t = Transaction::builder()
+            .date(Date::from_str_unchecked("2024-08-05"))
+            .flag(Flag::Okay)
+            .narration("Initial deposit".to_string())
+            .postings(vec![
+                Posting::builder()
+                    .units(
+                        IncompleteAmount::builder()
+                            .num(Some(Decimal::from_str_exact("154.20").unwrap()))
+                            .currency(Some(Currency::from("USD")))
+                            .build(),
+                    )
+                    .account(Account::from("Assets:US:BofA:Checking"))
+                    .build(),
+                Posting::builder()
+                    .units(
+                        IncompleteAmount::builder()
+                            .num(Some(Decimal::from_str_exact("-100").unwrap()))
+                            .currency(Some(Currency::from("USD")))
+                            .build(),
+                    )
+                    .account(Account::from("Assets:Cash"))
+                    .build(),
+            ])
+            .build();
+        println!("{}", t.to_string());
+    }
 }

@@ -1,3 +1,5 @@
+use core::fmt;
+
 use typed_builder::TypedBuilder;
 
 /// <https://docs.google.com/document/d/1wAMVrKIA2qtRGmoVDSUBJGmYZSygUaR0uOMW1GV3YE0/edit#heading=h.17ry42rqbuiu>
@@ -33,6 +35,13 @@ impl From<&str> for AccountType {
             "Expenses" => AccountType::Expenses,
             _ => panic!("Invalid account type: {}", s),
         }
+    }
+}
+
+// account type to String
+impl fmt::Display for AccountType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.default_name())
     }
 }
 
@@ -107,6 +116,17 @@ impl From<&str> for Account {
         }
     }
 }
+
+impl fmt::Display for Account {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        if self.parts.is_empty() {
+            write!(f, "{}", self.account_type)
+        } else {
+            write!(f, "{}:{}", self.account_type, self.parts.join(":"))
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -142,5 +162,27 @@ mod tests {
         let account = Account::builder().account_type(AccountType::Assets).build();
         assert_eq!(account.account_type, AccountType::Assets);
         assert_eq!(account.parts, Vec::<String>::new());
+    }
+
+    #[test]
+    fn test_account_type_to_str() {
+        let res = AccountType::Assets.to_string();
+        assert_eq!(res, "Assets");
+    }
+
+    #[test]
+    fn test_account_to_str() {
+        let account = Account::builder()
+            .account_type(AccountType::Assets)
+            .parts(vec![
+                "US".to_string(),
+                "BofA".to_string(),
+                "Checking".to_string(),
+            ])
+            .build();
+        assert_eq!(account.to_string(), "Assets:US:BofA:Checking");
+
+        let account = Account::builder().account_type(AccountType::Assets).build();
+        assert_eq!(account.to_string(), "Assets");
     }
 }

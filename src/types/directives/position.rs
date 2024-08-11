@@ -1,3 +1,5 @@
+use std::fmt;
+
 use rust_decimal::Decimal;
 use typed_builder::TypedBuilder;
 
@@ -137,6 +139,16 @@ pub struct CostSpec {
     /// Flag to indicate that all lots should be merged and average cost to be used
     #[builder(default)]
     pub merge_cost: bool,
+}
+
+impl fmt::Display for CostSpec {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut res = format!("{}", self.number_per.unwrap_or(Decimal::default()));
+        if let Some(currency) = &self.currency {
+            res.push_str(&format!(" {}", currency));
+        }
+        write!(f, "{}", res)
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash, TypedBuilder)]

@@ -1,6 +1,6 @@
 use rust_decimal::Decimal;
-use std::cmp;
 use std::convert::TryFrom;
+use std::{cmp, fmt};
 use typed_builder::TypedBuilder;
 
 use crate::currency::Currency;
@@ -35,6 +35,16 @@ pub struct IncompleteAmount {
     /// The (optional) commodity of the amount.
     #[builder(default)]
     pub currency: Option<Currency>,
+}
+
+impl fmt::Display for IncompleteAmount {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut res = format!("{}", self.num.unwrap_or(Decimal::default()));
+        if let Some(currency) = &self.currency {
+            res.push_str(&format!(" {}", currency));
+        }
+        write!(f, "{}", res)
+    }
 }
 
 impl cmp::PartialOrd for IncompleteAmount {
