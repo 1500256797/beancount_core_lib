@@ -32,3 +32,21 @@ pub struct Include {
     #[builder(default)]
     pub source: Option<String>,
 }
+
+
+impl std::fmt::Display for Include {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "include {}", self.filename)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        let include = Include::builder().filename("path/to/include/file.beancount".to_string()).build();
+        assert_eq!(include.to_string(), "include path/to/include/file.beancount");
+    }
+}

@@ -42,3 +42,40 @@ pub struct Balance {
     #[builder(default)]
     pub tolerance: Option<Decimal>,
 }
+
+
+impl std::fmt::Display for Balance {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} balance {} {}", self.date, self.account, self.amount)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::str::FromStr;
+
+    use crate::currency::Currency;
+
+    use super::*;
+
+
+    #[test]
+    fn test_display() {
+        let balance = Balance::builder().account(Account::from("Liabilities:CreditCard:CapitalOne"))
+            .amount(Amount::builder().num(Decimal::from(100)).currency(Currency::from("USD")).build())
+            .date(Date::from_str_unchecked("2016-11-28"))
+            .build();
+        
+        assert_eq!(balance.to_string(), "2016-11-28 balance Liabilities:CreditCard:CapitalOne 100 USD");
+    }
+
+    #[test]
+    fn test_display_with_tolerance() {
+        let balance = Balance::builder().account(Account::from("Liabilities:US:CreditCard"))
+            .amount(Amount::builder().num(Decimal::from_str("-3492.02").unwrap()).currency(Currency::from("USD")).build())
+            .date(Date::from_str_unchecked("2014-12-26"))
+            .build();
+        
+        assert_eq!(balance.to_string(), "2014-12-26 balance Liabilities:US:CreditCard -3492.02 USD");
+    }
+}

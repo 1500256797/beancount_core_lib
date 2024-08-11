@@ -50,3 +50,21 @@ pub struct Pad {
     /// Account to pad from.
     pub pad_from_account: Account,
 }
+
+
+impl std::fmt::Display for Pad {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} pad {} {}", self.date, self.pad_to_account, self.pad_from_account)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        let pad = Pad::builder().date(Date::from_str_unchecked("2013-11-03")).pad_to_account(Account::from("Liabilities:CreditCard")).pad_from_account(Account::from("Assets:US:BofA:Checking")).build();
+        assert_eq!(pad.to_string(), "2013-11-03 pad Liabilities:CreditCard Assets:US:BofA:Checking");
+    }
+}

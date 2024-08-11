@@ -15,6 +15,14 @@ pub struct Amount {
     pub currency: Currency,
 }
 
+
+impl std::fmt::Display for Amount {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} {}", self.num, self.currency)
+    }
+}
+
+
 impl cmp::PartialOrd for Amount {
     fn partial_cmp(&self, other: &Amount) -> Option<cmp::Ordering> {
         if self.currency == other.currency {

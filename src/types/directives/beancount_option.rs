@@ -72,3 +72,21 @@ impl BcOption {
         }
     }
 }
+
+
+impl std::fmt::Display for BcOption {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "option {} {}", self.name, self.val)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        let option = BcOption::builder().name("title".to_string()).val("Ed's Personal Ledger".to_string()).build();
+        assert_eq!(option.to_string(), "option title Ed's Personal Ledger");
+    }
+}

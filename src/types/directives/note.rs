@@ -39,3 +39,21 @@ pub struct Note {
     /// Note description.
     pub comment: String,
 }
+
+
+impl std::fmt::Display for Note {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} note {} \"{}\"", self.date, self.account, self.comment)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        let note = Note::builder().date(Date::from_str_unchecked("2013-11-03")).account(Account::from("Liabilities:CreditCard")).comment("Called about fraudulent card.".to_string()).build();
+        assert_eq!(note.to_string(), r#"2013-11-03 note Liabilities:CreditCard "Called about fraudulent card.""#);
+    }
+}

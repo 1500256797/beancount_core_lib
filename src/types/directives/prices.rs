@@ -46,3 +46,26 @@ pub struct Price {
     /// Value the currency is being quoted at.
     pub amount: Amount,
 }
+
+impl std::fmt::Display for Price {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} price {} {}", self.date, self.currency, self.amount)
+    }
+}
+
+
+
+#[cfg(test)]
+mod tests {
+    use std::str::FromStr;
+
+    use rust_decimal::Decimal;
+
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        let price = Price::builder().date(Date::from_str_unchecked("2014-07-09")).currency(Currency::from("HOOL")).amount(Amount::builder().num(Decimal::from_str("579.18").unwrap()).currency(Currency::from("USD")).build()).build();
+        assert_eq!(price.to_string(), "2014-07-09 price HOOL 579.18 USD");
+    }
+}

@@ -55,6 +55,15 @@ pub struct Open {
     pub booking: Option<Booking>,
 }
 
+
+impl std::fmt::Display for Open {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} open {} {}", self.date, self.account, self.currencies.iter().map(|c| c.to_string()).collect::<Vec<String>>().join(" "))
+    }
+}
+
+
+
 /// The set of booking methods for positions on accounts.
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Booking {
@@ -93,3 +102,15 @@ impl TryFrom<&str> for Booking {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        let open = Open::builder().date(Date::from_str_unchecked("2014-05-01")).account(Account::from("Liabilities:CreditCard:CapitalOne")).currencies(vec![Currency::from("USD")]).build();
+        assert_eq!(open.to_string(), "2014-05-01 open Liabilities:CreditCard:CapitalOne USD");
+    }
+}
+

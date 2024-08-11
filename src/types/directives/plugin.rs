@@ -42,3 +42,20 @@ pub struct Plugin {
     #[builder(default)]
     pub source: Option<String>,
 }
+
+impl std::fmt::Display for Plugin {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "plugin {} {}", self.module, self.config.as_deref().unwrap_or_default())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        let plugin = Plugin::builder().module("beancount.plugins.module_name".to_string()).config(Some("configuration data".to_string())).build();
+        assert_eq!(plugin.to_string(), "plugin beancount.plugins.module_name configuration data");
+    }
+}

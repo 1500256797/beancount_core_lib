@@ -1,3 +1,5 @@
+use std::fmt;
+
 use typed_builder::TypedBuilder;
 
 use crate::account::Account;
@@ -35,4 +37,25 @@ pub struct Close {
 
     /// Account being closed.
     pub account: Account,
+}
+
+
+impl fmt::Display for Close {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{} close {}", self.date, self.account)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        let close = Close {
+            date: Date::from_str_unchecked("2016-11-28"),
+            account: Account::from("Liabilities:CreditCard:CapitalOne"),
+        };
+        assert_eq!(close.to_string(), "2016-11-28 close Liabilities:CreditCard:CapitalOne");
+    }
 }
