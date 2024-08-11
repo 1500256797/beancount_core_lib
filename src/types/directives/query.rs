@@ -42,3 +42,20 @@ pub struct Query {
     /// Query contents.
     pub query_string: String,
 }
+
+impl std::fmt::Display for Query {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} query \"{}\" \"{}\"", self.date, self.name, self.query_string)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_display() {
+        let query = Query::builder().date(Date::from_str_unchecked("2014-07-09")).name("france-balances".to_string()).query_string("SELECT account, sum(position) WHERE 'trip-france-2014' in tags".to_string()).build();
+        assert_eq!(query.to_string(), r#"2014-07-09 query "france-balances" "SELECT account, sum(position) WHERE 'trip-france-2014' in tags""#);
+    }
+}
